@@ -1,7 +1,7 @@
 import tkinter
 from tkinter import ttk, Text, font as tkFont, filedialog
 import sv_ttk
-
+import counts
 
 def CreateDisplay():
     # window info
@@ -21,13 +21,13 @@ def CreateDisplay():
     root.tabbar.pack(fill=tkinter.BOTH, expand=True)
     
     # tab content
-    CreateScreenProcessingDisplay(screen_processing_tab)
+    CreateScreenProcessingDisplay(root, screen_processing_tab)
     
     # init ui
     sv_ttk.set_theme("light")
     root.mainloop()
         
-def CreateScreenProcessingDisplay(tab):
+def CreateScreenProcessingDisplay(root, tab):
     # screen processing tab content
     tab.frame = ttk.Frame(tab)
     tab.frame.pack(pady=0, padx=0, fill=tkinter.BOTH, expand=True)
@@ -67,21 +67,69 @@ def CreateScreenProcessingDisplay(tab):
     tab.frame_left.title.grid(row=0, column=0, sticky="nsew", pady=5, padx=5)
     
     # left panel - controls - parameter buttons
+    fasta_file_path = None
+    out_file_path = None
+    seq_file_name = ""
+ 
+    def check_params():
+        if fasta_file_path is None or out_file_path is None:
+            return False
+        else:
+            return True
+
     def open_library_fasta():
         button = tab.frame_left.button_library_fasta
-        file_path = filedialog.askopenfilename()
-        #TODO: add checks for valid file
-        button.config(text="✓ " + button.cget("text"))
+        file_path = filedialog.askopenfilename(filetypes= [("Fasta Files", "*.fasta")])
+        if file_path is not None and file_path !="":
+            fasta_file_path = file_path
+            if button.cget("text") != "✓ Library_Fasta":
+              button.config(text="✓ " + button.cget("text"))
+            if check_params() == True:
+                tab.frame_left.button_submit.config(state=tkinter.NORMAL)
+            else:
+                tab.frame_left.button_submit.config(state=tkinter.DISABLED)
         
+              
+    def set_out_file_path():
+        button = tab.frame_left.button_out_file_path
+        file_path = filedialog.askdirectory()
+        if file_path is not None and file_path !="":
+            out_file_path = file_path
+            if button.cget("text") != "✓ Out_File_Path":
+              button.config(text="✓ " + button.cget("text"))
+            if check_params() == True:
+                tab.frame_left.button_submit.config(state=tkinter.NORMAL)
+            else:
+                tab.frame_left.button_submit.config(state=tkinter.DISABLED)
+
+              
+    def set_seq_file_names():
+        button = tab.frame_left.button_seq_file_name
+        file_path = filedialog.askopenfilenames(filetypes=[("Seq Files", "*.seq")])
+        if file_path is not None and file_path !="":
+            seq_file_names = file_path
+            if button.cget("text") != "✓ Seq_File_Name":
+              button.config(text="✓ " + button.cget("text"))
+            if check_params() == True:
+                tab.frame_left.button_submit.config(state=tkinter.NORMAL)
+            else:
+                tab.frame_left.button_submit.config(state=tkinter.DISABLED)
+
+
     tab.frame_left.button_library_fasta = ttk.Button(tab.frame_left, text="Library_Fasta", command=open_library_fasta)
     tab.frame_left.button_library_fasta.grid(row=1, column=0, sticky="nsew")
     
-    tab.frame_left.button_out_file_path = ttk.Button(tab.frame_left, text="Out_File_Path", command=lambda: print("Out_File_Path"))
+    tab.frame_left.button_out_file_path = ttk.Button(tab.frame_left, text="Out_File_Path", command=set_out_file_path)
     tab.frame_left.button_out_file_path.grid(row=2, column=0, sticky="nsew")
     
-    tab.frame_left.button_seq_file_name = ttk.Button(tab.frame_left, text="Seq_File_Name", command=lambda: print("Seq_File_Name"))
+    tab.frame_left.button_seq_file_name = ttk.Button(tab.frame_left, text="Seq_File_Name", command=set_seq_file_names, )
     tab.frame_left.button_seq_file_name.grid(row=3, column=0, sticky="nsew")
     
+    tab.frame_left.button_submit = ttk.Button(tab.frame_left, text="Start Analysis")
+    tab.frame_left.button_submit.grid(row=4, column=0, sticky="nsew")
+    tab.frame_left.button_submit.config(style="Accent.TButton", state=tkinter.DISABLED)
+
+
 class RichText(Text):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
