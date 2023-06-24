@@ -1,1 +1,4 @@
-print("hello world");
+import gui
+
+# init gui
+gui.CreateDisplay()
