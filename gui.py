@@ -1,9 +1,7 @@
 import tkinter
-from tkinter import ttk, Text, font as tkFont, filedialog
+from tkinter import StringVar, ttk, Text, font as tkFont, filedialog, Scale, IntVar  
 import sv_ttk
 import counts
-
-# variables
 
 
 def CreateDisplay():
@@ -36,7 +34,7 @@ def CreateScreenProcessingDisplay(root, tab):
     tab.frame.pack(pady=0, padx=0, fill=tkinter.BOTH, expand=True)
     
     # right panel - information on how to use
-    tab.frame_right = ttk.Frame(tab.frame)
+    tab.frame_right = ttk.Frame(tab.frame, style='Card.TFrame', padding=(5, 6, 7, 8))
     # add an outline
     tab.frame_right.config(relief=tkinter.RIDGE, borderwidth=2)
     tab.frame_right.pack(side=tkinter.RIGHT, pady=10, padx=5, fill=tkinter.BOTH, expand=True)
@@ -62,11 +60,11 @@ def CreateScreenProcessingDisplay(root, tab):
     tab.text.insert("end", "Name(s) of sequencing file(s).\n")
     
     # left panel - controls for screen processing
-    tab.frame_left = ttk.Frame(tab.frame)
+    tab.frame_left = ttk.Frame(tab.frame, style='Card.TFrame', padding=(5, 6, 7, 8))
     tab.frame_left.pack(side=tkinter.LEFT, pady=10, padx=5, fill=tkinter.BOTH, expand=True)
     tab.frame_left.config(relief=tkinter.RIDGE, borderwidth=2)
     tab.frame_left.grid_columnconfigure(0, weight=1)
-    tab.frame_left.title = ttk.Label(tab.frame_left, text="Screen Processing")
+    tab.frame_left.title = ttk.Label(tab.frame_left, text="Parameters")
     tab.frame_left.title.grid(row=0, column=0, sticky="nsew", pady=5, padx=5)
     
     # left panel - controls - parameter buttons
@@ -76,6 +74,10 @@ def CreateScreenProcessingDisplay(root, tab):
     out_file_path = "/Users/rashid/Documents/Scripts/screen-processing/demo/output"
     #seq_file_names = None
     seq_file_names = ('/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index6.fastq', '/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index3.fastq', '/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index14.fastq', '/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index12.fastq', '/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index10.fastq', '/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index1.fastq')
+    test_mode = False
+    trim_start = IntVar(value=1)
+    trim_end = IntVar(value=35)
+    experiment_type = StringVar()
  
     def check_params(fasta_file_path, out_file_path, seq_file_names):
         if fasta_file_path is None or out_file_path is None or seq_file_names is None:
@@ -106,7 +108,7 @@ def CreateScreenProcessingDisplay(root, tab):
             check_params(fasta_file_path, out_file_path, seq_file_names)
            
     def set_seq_file_names():
-        global fasta_file_path, out_file_path, seq_file_names
+        global fasta_file_path, out_file_path, seq_file_names, test_mode, trim_start, trim_end
         button = tab.frame_left.button_seq_file_name
         file_path = filedialog.askopenfilenames(filetypes=[("FastQ Files", "*.fastq")])
         print(file_path)
@@ -117,29 +119,57 @@ def CreateScreenProcessingDisplay(root, tab):
         check_params(fasta_file_path, out_file_path, seq_file_names)
     
     def start_analysis():
-        print(fasta_file_path, out_file_path, seq_file_names)
         args = {
             "Seq_Files_Names": seq_file_names,
             "Library_Fasta": fasta_file_path,
-            "Out_File_Path": out_file_path
+            "Out_File_Path": out_file_path,
+            "test": test_mode,
+            "trim_start": trim_start.get(),
+            "trim_end": trim_end.get(),
         }
-        
+        # initial counts
         counts.counts_main(args)
+        # create config
+        
+        
 
-    tab.frame_left.button_library_fasta = ttk.Button(tab.frame_left, text="Library_Fasta", command=open_library_fasta)
-    tab.frame_left.button_library_fasta.grid(row=1, column=0, sticky="nsew")
+    # Create an input ttk box to enter experiment type
+    # options are CRISPRi_v2_human, CRISPRa_v2_human, CRISPRi_v2_mouse, CRISPRa_v2_mouse, CRISPRi_v1, CRISPRa_v1
+    experiment_type_options = ["CRISPRi", "CRISPRa", "CRISPRi_v2_human", "CRISPRa_v2_human", "CRISPRi_v2_mouse", "CRISPRa_v2_mouse", "CRISPRi_v1", "CRISPRa_v1"]
+    tab.frame_left.label_experiment_type = ttk.OptionMenu(tab.frame_left, experiment_type, experiment_type_options[0], *experiment_type_options)
+    tab.frame_left.label_experiment_type.grid(row=1, column=0, sticky="nsew", pady=5, padx=5, columnspan=2)
     
-    tab.frame_left.button_out_file_path = ttk.Button(tab.frame_left, text="Out_File_Path", command=set_out_file_path)
-    tab.frame_left.button_out_file_path.grid(row=2, column=0, sticky="nsew")
+    tab.frame_left.button_library_fasta = ttk.Button(tab.frame_left, text="Upload Fasta Library File", command=open_library_fasta)
+    tab.frame_left.button_library_fasta.grid(row=2, column=0, sticky="nsew", pady=(15, 5), columnspan=2)
     
-    tab.frame_left.button_seq_file_name = ttk.Button(tab.frame_left, text="Seq_File_Name", command=set_seq_file_names, )
-    tab.frame_left.button_seq_file_name.grid(row=3, column=0, sticky="nsew")
+    tab.frame_left.button_out_file_path = ttk.Button(tab.frame_left, text="Set Output Directory", command=set_out_file_path)
+    tab.frame_left.button_out_file_path.grid(row=3, column=0, sticky="nsew", pady=5, columnspan=2)
+    
+    tab.frame_left.button_seq_file_name = ttk.Button(tab.frame_left, text="Upload Sequencing file(s)", command=set_seq_file_names, )
+    tab.frame_left.button_seq_file_name.grid(row=4, column=0, sticky="nsew", pady=5, columnspan=2)
+    
+
+
+    # create label for trim_start and trim_end
+    
+    tab.frame_left.trim_start = Scale(tab.frame_left, from_=1, orient=tkinter.HORIZONTAL, variable=trim_start)
+    tab.frame_left.trim_start.grid(row=5, column=1, sticky="nsew", pady=5)
+    tab.frame_left.trim_start_label = ttk.Label(tab.frame_left, text=("Trim Start Value"))
+    tab.frame_left.trim_start_label.grid(row=5, column=0, sticky="nsew", pady=5)
+    
+    tab.frame_left.trim_end = Scale(tab.frame_left, from_=1, orient=tkinter.HORIZONTAL, variable=trim_end)
+    tab.frame_left.trim_end.grid(row=6, column=1, sticky="nsew", pady=5)
+    tab.frame_left.trim_end_label = ttk.Label(tab.frame_left, text="Trim End Value")
+    tab.frame_left.trim_end_label.grid(row=7, column=0, sticky="nsew", pady=5)
+    
+    tab.frame_left.test_mode_toggle = ttk.Checkbutton(tab.frame_left, style="Switch.TCheckbutton", text="Run in test mode", variable=test_mode, onvalue=True, offvalue=False)
+    tab.frame_left.test_mode_toggle.grid(row=7, column=0, sticky="nsew", pady=10, columnspan=2)
     
     tab.frame_left.button_submit = ttk.Button(tab.frame_left, text="Start Analysis")
     #prod: tab.frame_left.button_submit.config(style="Accent.TButton", state=tkinter.DISABLED, command=start_analysis)
     tab.frame_left.button_submit.config(style="Accent.TButton", state=tkinter.NORMAL, command=start_analysis)
     
-    tab.frame_left.button_submit.grid(row=4, column=0, sticky="nsew")
+    tab.frame_left.button_submit.grid(row=8, column=0, sticky="nsew", columnspan=2)
 
 
 class RichText(Text):
