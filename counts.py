@@ -8,6 +8,7 @@ import gzip
 import glob
 import fnmatch
 import multiprocessing
+from typing import Any
 
 ## global vars
 testLines = 10000
@@ -170,18 +171,20 @@ def printNow(printInput):
 
 ## primary func
 def counts_main(args):
+    print("arguments passed in ->>")
+    print(args().Seq_File_Names, args().Library_Fasta, args().Out_File_Path)
     # check args object for required inputs
-    if args.Seq_File_Names is None:
-      sys.exit('Input error: no sequencing files found')
-    if args.Library_Fasta is None:
+    if args().Seq_File_Names is None:
+      sys.exit('Input error: no sequencing files path found')
+    if args().Library_Fasta is None:
       sys.exit('Input error: library fasta file not found')
-    if args.Out_File_Path is None:
+    if args().Out_File_Path is None:
       sys.exit('Input error: no output file path found')
       
     # verify arg: sequencing files
-    numProcessors = max(args.processors, 1)
+    numProcessors = 1 # max(args.processors, 1)
     
-    infileList, outfileBaseList = parseSeqFileNames(args.Seq_File_Names)
+    infileList, outfileBaseList = parseSeqFileNames(args().Seq_File_Names)
     if len(infileList) == 0:
         sys.exit('Input error: no sequencing files found')
 
@@ -197,9 +200,9 @@ def counts_main(args):
     except ValueError as err:
         sys.exit('Input error: ' + err.args[0])
     
-    trimmedFastaPath = os.path.join(args.Out_File_Path, 'unaligned_reads')
+    trimmedFastaPath = os.path.join(args().Out_File_Path, 'unaligned_reads')
     makeDirectory(trimmedFastaPath)
-    countFilePath = os.path.join(args.Out_File_Path, 'count_files')
+    countFilePath = os.path.join(args().Out_File_Path, 'count_files')
     makeDirectory(countFilePath)
 
     fastaFileNameList = [outfileName + '_unaligned.fa' for outfileName in outfileBaseList]
@@ -212,7 +215,7 @@ def counts_main(args):
 
     try:
         resultList = parallelSeqFileToCountsParallel(
-            infileList, fastaFilePathList, countFilePathList, pool, args.Library_Fasta, args.trim_start, args.trim_end, args.test)
+            infileList, fastaFilePathList, countFilePathList, pool, args().Library_Fasta, args().trim_start, args().trim_end, args().test)
     except ValueError as err:
         sys.exit('Error while processing sequencing files: ' + ' '.join(err.args))
 

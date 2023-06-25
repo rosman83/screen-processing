@@ -3,6 +3,9 @@ from tkinter import ttk, Text, font as tkFont, filedialog
 import sv_ttk
 import counts
 
+# variables
+
+
 def CreateDisplay():
     # window info
     root = tkinter.Tk()
@@ -67,54 +70,58 @@ def CreateScreenProcessingDisplay(root, tab):
     tab.frame_left.title.grid(row=0, column=0, sticky="nsew", pady=5, padx=5)
     
     # left panel - controls - parameter buttons
-    fasta_file_path = None
-    out_file_path = None
-    seq_file_name = ""
+    fasta_file_path, out_file_path, seq_file_names = None, None, None
  
-    def check_params():
-        if fasta_file_path is None or out_file_path is None:
-            return False
+    def check_params(fasta_file_path, out_file_path, seq_file_names):
+        if fasta_file_path is None or out_file_path is None or seq_file_names is None:
+            tab.frame_left.button_submit.config(style="Accent.TButton", state=tkinter.DISABLED, command=None)
         else:
-            return True
+            tab.frame_left.button_submit.config(style="Accent.TButton", state=tkinter.NORMAL, command=start_analysis)
 
     def open_library_fasta():
+        global fasta_file_path, out_file_path, seq_file_names
         button = tab.frame_left.button_library_fasta
-        file_path = filedialog.askopenfilename(filetypes= [("Fasta Files", "*.fasta")])
+        file_path = filedialog.askopenfilename(filetypes= [("Fasta Files", "*.fasta"), ("Fasta Files", "*.fa")])
         if file_path is not None and file_path !="":
             fasta_file_path = file_path
             if button.cget("text") != "✓ Library_Fasta":
               button.config(text="✓ " + button.cget("text"))
-            if check_params() == True:
-                tab.frame_left.button_submit.config(state=tkinter.NORMAL)
-            else:
-                tab.frame_left.button_submit.config(state=tkinter.DISABLED)
+            check_params(fasta_file_path, out_file_path, seq_file_names)
         
               
     def set_out_file_path():
+        global fasta_file_path, out_file_path, seq_file_names
         button = tab.frame_left.button_out_file_path
         file_path = filedialog.askdirectory()
         if file_path is not None and file_path !="":
             out_file_path = file_path
             if button.cget("text") != "✓ Out_File_Path":
               button.config(text="✓ " + button.cget("text"))
-            if check_params() == True:
-                tab.frame_left.button_submit.config(state=tkinter.NORMAL)
-            else:
-                tab.frame_left.button_submit.config(state=tkinter.DISABLED)
+            check_params(fasta_file_path, out_file_path, seq_file_names)
 
               
     def set_seq_file_names():
+        global fasta_file_path, out_file_path, seq_file_names
         button = tab.frame_left.button_seq_file_name
-        file_path = filedialog.askopenfilenames(filetypes=[("Seq Files", "*.seq")])
+        file_path = filedialog.askopenfilenames(filetypes=[("FastQ Files", "*.fastq")])
         if file_path is not None and file_path !="":
             seq_file_names = file_path
-            if button.cget("text") != "✓ Seq_File_Name":
-              button.config(text="✓ " + button.cget("text"))
-            if check_params() == True:
-                tab.frame_left.button_submit.config(state=tkinter.NORMAL)
-            else:
-                tab.frame_left.button_submit.config(state=tkinter.DISABLED)
-
+        if button.cget("text") != "✓ Seq_File_Name":
+            button.config(text="✓ " + button.cget("text"))
+        check_params(fasta_file_path, out_file_path, seq_file_names)
+                
+    def start_analysis():
+        global fasta_file_path, out_file_path, seq_file_names
+        class ArgsObject:
+            def __init__(self, _seq_file_names, _out_file_path, _fasta_file_path):
+                self.Seq_File_Name = _seq_file_names
+                self.Out_File_Path = _out_file_path
+                self.Library_Fasta = _fasta_file_path
+                pass
+            def __call__(self):
+                return self
+        args = ArgsObject(seq_file_names, out_file_path, fasta_file_path)
+        counts.counts_main(args)
 
     tab.frame_left.button_library_fasta = ttk.Button(tab.frame_left, text="Library_Fasta", command=open_library_fasta)
     tab.frame_left.button_library_fasta.grid(row=1, column=0, sticky="nsew")
@@ -126,8 +133,8 @@ def CreateScreenProcessingDisplay(root, tab):
     tab.frame_left.button_seq_file_name.grid(row=3, column=0, sticky="nsew")
     
     tab.frame_left.button_submit = ttk.Button(tab.frame_left, text="Start Analysis")
+    tab.frame_left.button_submit.config(style="Accent.TButton", state=tkinter.DISABLED, command=start_analysis)
     tab.frame_left.button_submit.grid(row=4, column=0, sticky="nsew")
-    tab.frame_left.button_submit.config(style="Accent.TButton", state=tkinter.DISABLED)
 
 
 class RichText(Text):
