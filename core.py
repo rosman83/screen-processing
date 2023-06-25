@@ -1,5 +1,7 @@
 import gui
+from multiprocessing import freeze_support
 
-# init gui
-gui.CreateDisplay()
+if __name__ == '__main__':
+  freeze_support()
+  gui.CreateDisplay()
 

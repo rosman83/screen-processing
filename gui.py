@@ -70,57 +70,60 @@ def CreateScreenProcessingDisplay(root, tab):
     tab.frame_left.title.grid(row=0, column=0, sticky="nsew", pady=5, padx=5)
     
     # left panel - controls - parameter buttons
-    fasta_file_path, out_file_path, seq_file_names = None, None, None
+    #fasta_file_path = None
+    fasta_file_path = "/Users/rashid/Documents/Scripts/screen-processing/demo/data/CRISPRi_v1_human.trim_1_35.fa"
+    #out_file_path = None
+    out_file_path = "/Users/rashid/Documents/Scripts/screen-processing/demo/output"
+    #seq_file_names = None
+    seq_file_names = ('/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index6.fastq', '/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index3.fastq', '/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index14.fastq', '/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index12.fastq', '/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index10.fastq', '/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index1.fastq')
  
     def check_params(fasta_file_path, out_file_path, seq_file_names):
         if fasta_file_path is None or out_file_path is None or seq_file_names is None:
             tab.frame_left.button_submit.config(style="Accent.TButton", state=tkinter.DISABLED, command=None)
         else:
             tab.frame_left.button_submit.config(style="Accent.TButton", state=tkinter.NORMAL, command=start_analysis)
-
+    
     def open_library_fasta():
         global fasta_file_path, out_file_path, seq_file_names
         button = tab.frame_left.button_library_fasta
-        file_path = filedialog.askopenfilename(filetypes= [("Fasta Files", "*.fasta"), ("Fasta Files", "*.fa")])
+        file_path = filedialog.askopenfilename(filetypes= [("Fasta Files", "*.fasta"), ("Fasta Files", "*.fa")]).strip()
+        print(file_path)
         if file_path is not None and file_path !="":
             fasta_file_path = file_path
             if button.cget("text") != "✓ Library_Fasta":
               button.config(text="✓ " + button.cget("text"))
             check_params(fasta_file_path, out_file_path, seq_file_names)
-        
-              
+                    
     def set_out_file_path():
         global fasta_file_path, out_file_path, seq_file_names
         button = tab.frame_left.button_out_file_path
-        file_path = filedialog.askdirectory()
+        file_path = filedialog.askdirectory().strip()
+        print(file_path)
         if file_path is not None and file_path !="":
             out_file_path = file_path
             if button.cget("text") != "✓ Out_File_Path":
               button.config(text="✓ " + button.cget("text"))
             check_params(fasta_file_path, out_file_path, seq_file_names)
-
-              
+           
     def set_seq_file_names():
         global fasta_file_path, out_file_path, seq_file_names
         button = tab.frame_left.button_seq_file_name
         file_path = filedialog.askopenfilenames(filetypes=[("FastQ Files", "*.fastq")])
+        print(file_path)
         if file_path is not None and file_path !="":
             seq_file_names = file_path
         if button.cget("text") != "✓ Seq_File_Name":
             button.config(text="✓ " + button.cget("text"))
         check_params(fasta_file_path, out_file_path, seq_file_names)
-                
+    
     def start_analysis():
-        global fasta_file_path, out_file_path, seq_file_names
-        class ArgsObject:
-            def __init__(self, _seq_file_names, _out_file_path, _fasta_file_path):
-                self.Seq_File_Name = _seq_file_names
-                self.Out_File_Path = _out_file_path
-                self.Library_Fasta = _fasta_file_path
-                pass
-            def __call__(self):
-                return self
-        args = ArgsObject(seq_file_names, out_file_path, fasta_file_path)
+        print(fasta_file_path, out_file_path, seq_file_names)
+        args = {
+            "Seq_Files_Names": seq_file_names,
+            "Library_Fasta": fasta_file_path,
+            "Out_File_Path": out_file_path
+        }
+        
         counts.counts_main(args)
 
     tab.frame_left.button_library_fasta = ttk.Button(tab.frame_left, text="Library_Fasta", command=open_library_fasta)
@@ -133,7 +136,9 @@ def CreateScreenProcessingDisplay(root, tab):
     tab.frame_left.button_seq_file_name.grid(row=3, column=0, sticky="nsew")
     
     tab.frame_left.button_submit = ttk.Button(tab.frame_left, text="Start Analysis")
-    tab.frame_left.button_submit.config(style="Accent.TButton", state=tkinter.DISABLED, command=start_analysis)
+    #prod: tab.frame_left.button_submit.config(style="Accent.TButton", state=tkinter.DISABLED, command=start_analysis)
+    tab.frame_left.button_submit.config(style="Accent.TButton", state=tkinter.NORMAL, command=start_analysis)
+    
     tab.frame_left.button_submit.grid(row=4, column=0, sticky="nsew")
 
 
