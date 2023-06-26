@@ -2,7 +2,7 @@ import tkinter
 from tkinter import StringVar, ttk, Text, font as tkFont, filedialog, Scale, IntVar  
 import sv_ttk
 import counts
-
+import config
 
 def CreateDisplay():
     # window info
@@ -126,10 +126,12 @@ def CreateScreenProcessingDisplay(root, tab):
             "test": test_mode,
             "trim_start": trim_start.get(),
             "trim_end": trim_end.get(),
+            "experiment_type": experiment_type.get(),
         }
         # initial counts
         counts.counts_main(args)
         # create config
+        config.create_config(args["Out_File_Path"], args['experiment_type'])
         
         
 
