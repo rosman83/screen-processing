@@ -4,7 +4,7 @@
 [experiment_settings]
 
 output_folder = /Users/rashid/Documents/Scripts/screen-processing/demo/output
-experiment_name = 6HGmkp
+experiment_name = YCGmRH
 
 #############################################################
 ##                    Library Settings                     ##
