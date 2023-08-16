@@ -3,8 +3,8 @@
 #############################################################
 [experiment_settings]
 
-output_folder = /Users/rashid/Documents/Scripts/screen-processing/demo/output
-experiment_name = YCGmRH
+output_folder = /Users/rashid/Documents/Scripts/screen-processing/demo/output/count_files
+experiment_name = oFoNZr
 
 #############################################################
 ##                    Library Settings                     ##
@@ -12,7 +12,7 @@ experiment_name = YCGmRH
 [library_settings]
 
 #options are CRISPRi_v2_human, CRISPRa_v2_human, CRISPRi_v2_mouse, CRISPRa_v2_mouse, CRISPRi_v1, CRISPRa_v1
-library = CRISPRi
+library = CRISPRi_v2_human
 
 #If you are using all sublibraries you don't need to change anything
 #Otherwise, uncomment and edit a list from below:
@@ -51,7 +51,7 @@ library = CRISPRi
 #	m6_Supp5
 #	m7_Supp5
 
-#CRISPRi_v1 sublibraries
+#CRISPRi_v1 sublibraries 
 #sublibraries =
 #    Apoptosis+Cancer+Other_Cancer
 #    Drug_Targets+Kinase_Phosphatase
@@ -85,7 +85,12 @@ library = CRISPRi
 #	/home/max/counts/Sample1_index12_CRISPRi.counts:untreated|Rep1
 
 counts_file_string =
-	
+	/Users/rashid/Documents/Scripts/screen-processing/demo/output/count_files/Demo_index1_CRISPRi_v1_human.trim_1_35.fa.counts:treated|Rep1
+	/Users/rashid/Documents/Scripts/screen-processing/demo/output/count_files/Demo_index3_CRISPRi_v1_human.trim_1_35.fa.counts:untreated|Rep1
+	/Users/rashid/Documents/Scripts/screen-processing/demo/output/count_files/Demo_index6_CRISPRi_v1_human.trim_1_35.fa.counts:untreated|Rep2
+	/Users/rashid/Documents/Scripts/screen-processing/demo/output/count_files/Demo_index10_CRISPRi_v1_human.trim_1_35.fa.counts:T0|Rep1
+	/Users/rashid/Documents/Scripts/screen-processing/demo/output/count_files/Demo_index12_CRISPRi_v1_human.trim_1_35.fa.counts:T0|Rep2
+	/Users/rashid/Documents/Scripts/screen-processing/demo/output/count_files/Demo_index14_CRISPRi_v1_human.trim_1_35.fa.counts:treated|Rep2
 
 
 #############################################################
@@ -112,6 +117,7 @@ minimum_reads = 50
 
 
 condition_string =
+    gamma:T0:untreated
 	
 
 

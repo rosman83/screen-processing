@@ -4,7 +4,7 @@ import fileinput
 from configparser import ConfigParser
 import os
 
-def create_config(output_folder, library):
+def create_config(output_folder, library, counts_files_obj):
     # Step 1: Create a copy of the default experiment config file
     shutil.copyfile("experiment_config_file_BLANK.txt", "experiment_config_file.txt")
     random_id = ''.join(random.choices('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890', k=6))
@@ -19,6 +19,18 @@ def create_config(output_folder, library):
             if line_number == 15:
                 line = line.rstrip() + " " + library + "\n"
             print(line, end='')
+    # Step 3: Append each count file to counts_file_string starting on line 88, with the format: counts_file_path:condition|replicate
+    with fileinput.FileInput("experiment_config_file.txt", inplace=True) as file:
+        formatted_counts_files = ""
+        for count_file in counts_files_obj:
+            formatted_counts_files += "\t" + count_file["path"] + ":" + count_file["condition"] + "|" + count_file["replicate_id"] + "\n"
+        for line_number, line in enumerate(file, start=1):
+            if line_number == 88:
+                line = line.rstrip() + formatted_counts_files
+            print(line, end='')
+    
+    
+    
 
 # Parse and validate the input of an experiment config file
 # output a dict with all of the parameters needed to process experiments
@@ -156,13 +168,11 @@ def parseExptConfig(configFile, librariesToSublibrariesDict):
             'sgrna_analysis', 'condition_string').strip()
 
         paramDict['condition_tuples'] = []
-        print("we get here")
         if 'counts_file_list' in paramDict:
             expectedConditions = set(
                 list(zip(*paramDict['counts_file_list']))[0])
         else:
             expectedConditions = []
-        print("we dont get here")
         enteredConditions = set()
 
         for conditionStringLine in conditionString.split('\n'):

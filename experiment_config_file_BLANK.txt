@@ -51,7 +51,7 @@ library =
 #	m6_Supp5
 #	m7_Supp5
 
-#CRISPRi_v1 sublibraries
+#CRISPRi_v1 sublibraries 
 #sublibraries =
 #    Apoptosis+Cancer+Other_Cancer
 #    Drug_Targets+Kinase_Phosphatase
@@ -112,6 +112,7 @@ minimum_reads = 50
 
 
 condition_string =
+    gamma:T0:untreated
 	
 
 
