@@ -1,10 +1,11 @@
 import tkinter
-from tkinter import ttk
+from tkinter import Tk, ttk
 
+import gui.display_gui as display_gui
 
 def settings_gui_init(root, tab):
   # main settings panel
-  tab.frame = ttk.Frame(tab)
+  tab.frame = display_gui.VerticalScrolledFrame(tab)
   tab.frame.pack(pady=0, padx=0, fill=tkinter.BOTH, expand=True)
   # panel to edit filter_settings
   filter_settings_panel(tab)
@@ -13,9 +14,12 @@ def settings_gui_init(root, tab):
   possible_treatment_settings_panel(tab)
   # panel to enable growth values
   # panel to edit gene_analysis
+  gene_analysis_settings_panel(tab)
+  # panel with button to save settings
+  save_settings_panel(tab)
 def filter_settings_panel(tab):
   # create a frame for the filter settings
-  tab.filter_settings_frame = ttk.Frame(tab.frame, style="Card.TFrame", padding=(5, 6, 7, 8))
+  tab.filter_settings_frame = ttk.Frame(tab.frame.interior, style="Card.TFrame", padding=(5, 6, 7, 8))
   tab.filter_settings_frame.pack(
     pady=10, padx=5, fill=tkinter.BOTH, expand=False
   )
@@ -54,7 +58,7 @@ def filter_settings_panel(tab):
   minimum_reads_entry.grid(row=3, column=1, sticky="nsew",  columnspan=1, pady=5, padx=5)
 def sgrna_analysis_settings_panel(tab):
   # create a frame for the sgrna_analysis settings
-  tab.sgrna_analysis_settings_frame = ttk.Frame(tab.frame, style="Card.TFrame", padding=(5, 6, 7, 8))
+  tab.sgrna_analysis_settings_frame = ttk.Frame(tab.frame.interior, style="Card.TFrame", padding=(5, 6, 7, 8))
   tab.sgrna_analysis_settings_frame.pack(
     pady=10, padx=5, fill=tkinter.BOTH, expand=False
   )
@@ -81,7 +85,7 @@ def sgrna_analysis_settings_panel(tab):
   sgrna_analysis_conditions_entry.grid(row=1, column=1, sticky="nsew",  columnspan=1, pady=5, padx=5)
 def possible_treatment_settings_panel(tab):
   # create a frame for the possible_treatment settings
-  tab.possible_treatment_settings_frame = ttk.Frame(tab.frame, style="Card.TFrame", padding=(5, 6, 7, 8))
+  tab.possible_treatment_settings_frame = ttk.Frame(tab.frame.interior, style="Card.TFrame", padding=(5, 6, 7, 8))
   tab.possible_treatment_settings_frame.pack(
     pady=10, padx=5, fill=tkinter.BOTH, expand=False
   )
@@ -117,6 +121,133 @@ def possible_treatment_settings_panel(tab):
   pseudocount.set(1) # replace with config
   pseudocount_entry = ttk.Entry(tab.possible_treatment_settings_frame, textvariable=pseudocount)
   pseudocount_entry.grid(row=3, column=1, sticky="nsew",  columnspan=1, pady=5, padx=5)
+def gene_analysis_settings_panel(tab):
+  # create a frame for the gene_analysis settings
+  tab.gene_analysis_settings_frame = ttk.Frame(tab.frame.interior, style="Card.TFrame", padding=(5, 6, 7, 8))
+  tab.gene_analysis_settings_frame.pack(
+    pady=10, padx=5, fill=tkinter.BOTH, expand=False
+  )
+  tab.gene_analysis_settings_frame.config(relief=tkinter.RIDGE, borderwidth=2)
+  tab.gene_analysis_settings_frame.grid_columnconfigure(0, weight=1)
+  # create the introductory title and text for the gene_analysis settings
+  gene_analysis_settings_title = ttk.Label(
+    tab.gene_analysis_settings_frame,
+    text="Gene Analysis Settings",
+    font=('Helvetica', 16, 'bold')
+  )
+  gene_analysis_settings_title.grid(row=0, column=0, sticky="nsew", columnspan=1, pady=5, padx=5)
+  # create a control to toggle collapse_to_transcripts being either True or False, default is True with a label in the same row
+  collapse_to_transcripts_label = ttk.Label(
+    tab.gene_analysis_settings_frame,
+    text="Collapse to Transcripts",
+  )
+  collapse_to_transcripts_label.grid(row=1, column=0, sticky="nsew", columnspan=1, pady=5, padx=5)
+  collapse_to_transcripts = tkinter.BooleanVar()
+  collapse_to_transcripts.set(True)
+  collapse_to_transcripts_checkbutton = ttk.Checkbutton(tab.gene_analysis_settings_frame, variable=collapse_to_transcripts, style="Switch.TCheckbutton")
+  collapse_to_transcripts_checkbutton.grid(row=1, column=1, sticky="nsew",  columnspan=1, pady=5, padx=5)
+  # create a description for collapse_to_transcripts under that control in the row under it
+  collapse_to_transcripts_description = ttk.Label(
+    tab.gene_analysis_settings_frame,
+    text="Set to true to combine sgRNAs by transcripts, false to combine by genes. If this is set to true and calculate Mann-Whitney p-value \nis set to true, the script will also generate a table of gene scores based on the transcript with the best mw p-value",
+    font=(12)
+  )
+  collapse_to_transcripts_description.grid(row=2, column=0, sticky="ew", columnspan=2, pady=5, padx=5)
+  # create a control to change generate_pseudogene_dist from a list of options, "auto", "manual", "off", default is auto
+  generate_pseudogene_dist_label = ttk.Label(
+    tab.gene_analysis_settings_frame,
+    text="Generate Pseudogene Distribution",
+  )
+  generate_pseudogene_dist_label.grid(row=3, column=0, sticky="nsew", columnspan=1, pady=5, padx=5)
+  generate_pseudogene_dist = tkinter.StringVar()
+  generate_pseudogene_dist.set("auto")
+  generate_pseudogene_dist_combobox = ttk.Combobox(tab.gene_analysis_settings_frame, textvariable=generate_pseudogene_dist, values=["auto", "manual", "off"])
+  generate_pseudogene_dist_combobox.grid(row=3, column=1, sticky="nsew",  columnspan=1, pady=5, padx=5)
+  # create a description for generate_pseudogene_dist under that control in the row under it
+  generate_pseudogene_dist_description = ttk.Label(
+    tab.gene_analysis_settings_frame,
+    text="Generates a distribution of negative control genes by randomly sampling. \nUsed to perform same metric calculations on this set. Set to auto to match the pseudogenes with the \ntargeting library table, manual to specify pseudogenes with the below \nsettings, or off to not generate pseudogene distributions",
+    font=(12),
+    style="Description.TLabel"
+  )
+  generate_pseudogene_dist_description.grid(row=4, column=0, sticky="ew", columnspan=2, pady=5, padx=5)
+  # create a control to edit pseudogene_size, being an integer, default is 10
+  pseudogene_size_label = ttk.Label(tab.gene_analysis_settings_frame, text="Pseudogene Size")
+  pseudogene_size_label.grid(row=5, column=0, sticky="nsew", columnspan=1, pady=5, padx=5)
+  pseudogene_size = tkinter.IntVar()
+  pseudogene_size.set(10)
+  pseudogene_size_entry = ttk.Entry(tab.gene_analysis_settings_frame, textvariable=pseudogene_size)
+  pseudogene_size_entry.grid(row=5, column=1, sticky="nsew",  columnspan=1, pady=5, padx=5)
+  # create a control to edit num_pseudogenes, being an integer, default is 16000
+  num_psuedogenes_label = ttk.Label(tab.gene_analysis_settings_frame, text="Number of Pseudogenes")
+  num_psuedogenes_label.grid(row=6, column=0, sticky="nsew", columnspan=1, pady=5, padx=5)
+  num_psuedogenes = tkinter.IntVar()
+  num_psuedogenes.set(16000)
+  num_psuedogenes_entry = ttk.Entry(tab.gene_analysis_settings_frame, textvariable=num_psuedogenes)
+  num_psuedogenes_entry.grid(row=6, column=1, sticky="nsew",  columnspan=1, pady=5, padx=5)
+  # create a control to toggle calculate_average_mw being either True or False, default is True with a label in the same row
+  calculate_average_mw_label = ttk.Label(
+    tab.gene_analysis_settings_frame,
+    text="Calculate Average of best n sgRNAs",
+  )
+  calculate_average_mw_label.grid(row=7, column=0, sticky="nsew", columnspan=1, pady=5, padx=5)
+  calculate_average_mw = tkinter.BooleanVar()
+  calculate_average_mw.set(True)
+  calculate_average_mw_checkbutton = ttk.Checkbutton(tab.gene_analysis_settings_frame, variable=calculate_average_mw, style="Switch.TCheckbutton")
+  calculate_average_mw_checkbutton.grid(row=7, column=1, sticky="nsew",  columnspan=1, pady=5, padx=5)
+  # create a control to edit best_n, being an integer, default is 3
+  best_n_label = ttk.Label(tab.gene_analysis_settings_frame, text="Best n value")
+  best_n_label.grid(row=8, column=0, sticky="nsew", columnspan=1, pady=5, padx=5)
+  best_n = tkinter.IntVar()
+  best_n.set(3)
+  best_n_entry = ttk.Entry(tab.gene_analysis_settings_frame, textvariable=best_n)
+  best_n_entry.grid(row=8, column=1, sticky="nsew",  columnspan=1, pady=5, padx=5)
+  # create a description for calculate_average_mw and best_n under that control in the row under it
+  calculate_average_mw_description = ttk.Label(
+    tab.gene_analysis_settings_frame,
+    text="Set to true to perform this analysis.\nBest is defined as largest phenotype by absolute value. -1 to take average of all.",
+    font=(12)
+  )
+  calculate_average_mw_description.grid(row=9, column=0, sticky="ew", columnspan=2, pady=5, padx=5)
+  
+  # create a control to toggle calculate_mw, being either True or False, default is True with a label in the same row, "Calculate Mann-Whitney p-values"
+  calculate_mw_label = ttk.Label(
+    tab.gene_analysis_settings_frame,
+    text="Calculate Mann-Whitney p-values"
+  )
+  calculate_mw_label.grid(row=10, column=0, sticky="nsew", columnspan=1, pady=5, padx=5)
+  calculate_mw = tkinter.BooleanVar()
+  calculate_mw.set(True)
+  calculate_mw_checkbutton = ttk.Checkbutton(tab.gene_analysis_settings_frame, variable=calculate_mw, style="Switch.TCheckbutton")
+  calculate_mw_checkbutton.grid(row=10, column=1, sticky="nsew",  columnspan=1, pady=5, padx=5)
+  # create a control to enable or disable calculate_nth with the label Score based on nth best sgRNA
+  calculate_nth_label = ttk.Label(
+    tab.gene_analysis_settings_frame,
+    text="Score based on nth best sgRNA"
+  )
+  calculate_nth_label.grid(row=11, column=0, sticky="nsew", columnspan=1, pady=5, padx=5)
+  calculate_nth = tkinter.BooleanVar()
+  calculate_nth.set(False)
+  calculate_nth_checkbutton = ttk.Checkbutton(tab.gene_analysis_settings_frame, variable=calculate_nth, style="Switch.TCheckbutton")
+  calculate_nth_checkbutton.grid(row=11, column=1, sticky="nsew",  columnspan=1, pady=5, padx=5)
+  # create a control to edit nth, being an integer, default is 2
+  nth_label = ttk.Label(tab.gene_analysis_settings_frame, text="nth value")
+  nth_label.grid(row=12, column=0, sticky="nsew", columnspan=1, pady=5, padx=5)
+  nth = tkinter.IntVar()
+  nth.set(2)
+  nth_entry = ttk.Entry(tab.gene_analysis_settings_frame, textvariable=nth)
+  nth_entry.grid(row=12, column=1, sticky="nsew",  columnspan=1, pady=5, padx=5)
+def save_settings_panel(tab):
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
     
     
