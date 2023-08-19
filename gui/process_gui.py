@@ -106,7 +106,8 @@ def process_gui_init(root, tab):
     def submit_counts_files():
         # create config
         global counts_files_obj, folder_path, library_tables_file_path
-        config.create_config(folder_path, experiment_type.get(), counts_files_obj)
+        print(counts_files_obj, folder_path, library_tables_file_path)
+        config.create_config_using_parser(folder_path, experiment_type.get(), counts_files_obj)
 
         # process experiment
         process.processExperimentsFromConfig(library_tables_file_path)

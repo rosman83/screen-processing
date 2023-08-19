@@ -22,7 +22,7 @@ defaultLibConfigName = 'library_config.txt'
 
 def processExperimentsFromConfig(libraryDirectory):
     generatePlots='png'
-    configFile='experiment_config_file.txt'
+    configFile='config.ini'
     # load in the supported libraries and sublibraries
     try:
         librariesToSublibraries, librariesToTables = parseLibraryConfig(
@@ -158,12 +158,17 @@ def processExperimentsFromConfig(libraryDirectory):
         printNow('-generating phenotype histograms and scatter plots')
 
         for (phenotype, condition1, condition2) in exptParameters['condition_tuples']:
+            print('--  [MAIN]' + phenotype)
             for replicate in replicateList:
+                print('----' + replicate)
+                print('------' + condition1 + ' vs ' + condition2)
+                print('--------' + 'scatter plot')
                 screen_analysis.countsScatter(tempDataDict, condition1, replicate, condition2, replicate,
                                               colorByPhenotype_condition=phenotype, colorByPhenotype_replicate=replicate)
-
+                print('--------' + 'histogram')
                 screen_analysis.phenotypeHistogram(
                     tempDataDict, phenotype, replicate)
+                print('--------' + 'volcano plot')
                 screen_analysis.sgRNAsPassingFilterHist(
                     tempDataDict, phenotype, replicate)
 

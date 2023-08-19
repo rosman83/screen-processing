@@ -8,6 +8,7 @@ import gui.counts_gui as counts_gui
 import gui.process_gui as process_gui
 import gui.settings_gui as settings_gui
 
+# TODO: Add validation for minimum/maximum value slides across all tabs ex. trim end/start
 def CreateDisplay():
     # window info
     root = tkinter.Tk()

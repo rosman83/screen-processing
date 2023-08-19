@@ -134,11 +134,6 @@ def counts_gui_init(root, tab):
         }
         # initial counts
         counts.counts_main(args)
-        # TODO: Moving this to step 2 instead in marking.
-        # create config TODO: Finish this
-        # config.create_config(args["Out_File_Path"], args["experiment_type"])
-        # process experiment
-        # process.processExperimentsFromConfig(args["library_tables_file_path"])
 
     tab.frame_left.button_library_fasta = ttk.Button(
         tab.frame_left, text="Upload Fasta Library File", command=open_library_fasta

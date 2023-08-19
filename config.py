@@ -4,36 +4,54 @@ import fileinput
 from configparser import ConfigParser
 import os
 
-def create_config(output_folder, library, counts_files_obj):
-    # Step 1: Create a copy of the default experiment config file
-    shutil.copyfile("experiment_config_file_BLANK.txt", "experiment_config_file.txt")
+def init_config():
+    # create config.ini file at root if not present
+    if not os.path.exists('config.ini'):
+        config = ConfigParser()
+        # add default settings
+        # # defaults settings for [filter_settings]
+        config['filter_settings'] = {'filter_type': 'either', 'minimum_reads': 50}
+        # # default settings for [sgrna_analysis]
+        # TODO: Automatically add a tab for each condition in the condition_string
+        config['sgrna_analysis'] = {
+            'pseudocount_behavior': 'zeros only', 'pseudocount': 0.1,
+            'condition_string': 'gamma:T0:untreated\nrho:untreated:treated\ntau:T0:treated'
+        }
+        # # default settings for [gene_analysis]
+        config['gene_analysis'] = {'collapse_to_transcripts': True, 'generate_pseudogene_dist': 'auto', 'pseudogene_size': 10, 'num_pseudogenes': 16000, 'calculate_ave': True, 'best_n': 3, 'calculate_mw': True, 'calculate_nth': False, 'nth': 2}
+        # TODO: Add dedicated controls for growth values
+        # # default settings for [growth_values]
+        config['growth_values'] = {'growth_value_string': 'gamma:Rep2:11.1519761622\nrho:Rep2:8.44158496881\ntau:Rep2:2.7103911934\ngamma:Rep1:10.7412001484\nrho:Rep1:7.82935376641\ntau:Rep1:2.9118463821'}
+        
+        with open('config.ini', 'w') as configfile:
+            config.write(configfile)
+
+def create_config_using_parser(output_folder, library, counts_files_obj):
+    parser = ConfigParser()
+    parser.read("config.ini")
+    if parser.has_section('experiment_settings'):
+        parser.remove_section('experiment_settings')
+    if parser.has_section('library_settings'):
+        parser.remove_section('library_settings')
+    if parser.has_section('counts_files'):
+        parser.remove_section('counts_files')
+    # if parser.has_section('growth_values'):
+    #     parser.remove_section('growth_values')
+    parser.add_section('experiment_settings')
+    parser.add_section('library_settings')
+    parser.add_section('counts_files')
+    # parser.add_section('growth_values')
     random_id = ''.join(random.choices('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890', k=6))
-
-    # Step 2: Append output_folder to line 4
-    with fileinput.FileInput("experiment_config_file.txt", inplace=True) as file:
-        for line_number, line in enumerate(file, start=1):
-            if line_number == 6:
-                line = line.rstrip() + " " + output_folder + "\n"
-            if line_number == 7:
-                line = line.rstrip() + " " + random_id + "\n"
-            if line_number == 15:
-                line = line.rstrip() + " " + library + "\n"
-            print(line, end='')
-    # Step 3: Append each count file to counts_file_string starting on line 88, with the format: counts_file_path:condition|replicate
-    with fileinput.FileInput("experiment_config_file.txt", inplace=True) as file:
-        formatted_counts_files = ""
-        for count_file in counts_files_obj:
-            formatted_counts_files += "\t" + count_file["path"] + ":" + count_file["condition"] + "|" + count_file["replicate_id"] + "\n"
-        for line_number, line in enumerate(file, start=1):
-            if line_number == 88:
-                line = line.rstrip() + formatted_counts_files
-            print(line, end='')
-    
-    
-    
-
-# Parse and validate the input of an experiment config file
-# output a dict with all of the parameters needed to process experiments
+    parser.set('experiment_settings', 'output_folder', output_folder)
+    parser.set('experiment_settings', 'experiment_name', random_id)
+    parser.set('library_settings', 'library', library)
+    formatted_counts_files = ""
+    # TODO: Same as condition string, manage tabs and newlines..
+    for count_file in counts_files_obj:
+        formatted_counts_files += count_file["path"] + ":" + count_file["condition"] + "|" + count_file["replicate_id"] + "\n"
+    parser.set('counts_files', 'counts_file_string', formatted_counts_files)
+    with open("config.ini", 'w') as configfile:
+        parser.write(configfile)
 
 def parseExptConfig(configFile, librariesToSublibrariesDict):
     parser = ConfigParser()
@@ -300,7 +318,6 @@ def parseExptConfig(configFile, librariesToSublibrariesDict):
         warningString += 'No growth values--all phenotypes will be reported as log2enrichments\n'
 
         paramDict['growth_value_tuples'] = []
-
         if 'condition_tuples' in paramDict and 'counts_file_list' in paramDict:
             expectedComparisons = set(
                 list(zip(*paramDict['condition_tuples']))[0])
