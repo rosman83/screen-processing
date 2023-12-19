@@ -10,8 +10,6 @@ import fnmatch
 import multiprocessing
 from multiprocessing import freeze_support
 
-# TODO: add controls for optional arguments, test, trim start, trim end, processors
-# TODO: Fix issue of pressing cancel and returning to main window
 if __name__ == "__main__":
     freeze_support()
 

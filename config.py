@@ -12,7 +12,6 @@ def init_config():
         # # defaults settings for [filter_settings]
         config['filter_settings'] = {'filter_type': 'either', 'minimum_reads': 50}
         # # default settings for [sgrna_analysis]
-        # TODO: Automatically add a tab for each condition in the condition_string
         config['sgrna_analysis'] = {
             'pseudocount_behavior': 'zeros only', 'pseudocount': 0.1,
             'condition_string': 'gamma:T0:untreated\nrho:untreated:treated\ntau:T0:treated'
@@ -46,7 +45,6 @@ def create_config_using_parser(output_folder, library, counts_files_obj):
     parser.set('experiment_settings', 'experiment_name', random_id)
     parser.set('library_settings', 'library', library)
     formatted_counts_files = ""
-    # TODO: Same as condition string, manage tabs and newlines..
     for count_file in counts_files_obj:
         formatted_counts_files += count_file["path"] + ":" + count_file["condition"] + "|" + count_file["replicate_id"] + "\n"
     parser.set('counts_files', 'counts_file_string', formatted_counts_files)

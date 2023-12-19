@@ -13,6 +13,7 @@ from tkinter import (
 import config
 import process
 
+# TODO: Add lazy export support message to the counts folder
 def process_gui_init(root, tab):
     # vars
     experiment_type_options = [
@@ -111,6 +112,11 @@ def process_gui_init(root, tab):
 
         # process experiment
         process.processExperimentsFromConfig(library_tables_file_path)
+        #TODO: test this to make sure it works
+        tkinter.messagebox.showinfo("Success", "Analysis results and plots have been saved to the count files folder with a prefix identifier.")
+        
+        
+        
         return
 
     # initial upload button

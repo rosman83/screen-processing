@@ -158,17 +158,11 @@ def processExperimentsFromConfig(libraryDirectory):
         printNow('-generating phenotype histograms and scatter plots')
 
         for (phenotype, condition1, condition2) in exptParameters['condition_tuples']:
-            print('--  [MAIN]' + phenotype)
             for replicate in replicateList:
-                print('----' + replicate)
-                print('------' + condition1 + ' vs ' + condition2)
-                print('--------' + 'scatter plot')
                 screen_analysis.countsScatter(tempDataDict, condition1, replicate, condition2, replicate,
                                               colorByPhenotype_condition=phenotype, colorByPhenotype_replicate=replicate)
-                print('--------' + 'histogram')
                 screen_analysis.phenotypeHistogram(
                     tempDataDict, phenotype, replicate)
-                print('--------' + 'volcano plot')
                 screen_analysis.sgRNAsPassingFilterHist(
                     tempDataDict, phenotype, replicate)
 
@@ -299,7 +293,8 @@ def processExperimentsFromConfig(libraryDirectory):
             geneTableCollapsed.to_csv(
                 outbase + '_genetable_collapsed.txt', sep='\t')
 
-    if generatePlots != 'off':
+    # TODO: Fix the issues with Volcano Plots in the future...
+    """ if generatePlots != 'off':
         if 'calculate_ave' in exptParameters['analyses'] and 'calculate_mw' in exptParameters['analyses']:
             tempDataDict = {'library': libraryTable[sublibColumn],
                             'gene scores': geneTableCollapsed if exptParameters['collapse_to_transcripts'] else geneTable}
@@ -308,7 +303,7 @@ def processExperimentsFromConfig(libraryDirectory):
                 # just plot averaged reps where available
                 if len(replicateList) == 1 or replicate[:4] == 'ave_':
                     screen_analysis.volcanoPlot(
-                        tempDataDict, phenotype, replicate, labelHits=False)
+                        tempDataDict, phenotype, replicate, labelHits=False) """
 
     print('Done!')
 

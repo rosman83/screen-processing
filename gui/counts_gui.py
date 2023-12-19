@@ -63,15 +63,19 @@ def counts_gui_init(root, tab):
     fasta_file_path = "/Users/rashid/Documents/Scripts/screen-processing/demo/data/CRISPRi_v1_human.trim_1_35.fa"
     # out_file_path = None
     out_file_path = "/Users/rashid/Documents/Scripts/screen-processing/demo/output"
-    # seq_file_names = None
+    seq_file_names = None
     seq_file_names = (
-        "/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index6.fastq",
-        "/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index3.fastq",
-        "/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index14.fastq",
-        "/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index12.fastq",
-        "/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index10.fastq",
         "/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index1.fastq",
+        "/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index10.fastq"
     )
+   #  seq_file_names = (
+    #    "/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index6.fastq",
+    #    "/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index3.fastq",
+    #    "/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index14.fastq",
+    #    "/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index12.fastq",
+    #    "/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index10.fastq",
+    #    "/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index1.fastq",
+    #) 
     test_mode = False
     trim_start = IntVar(value=1)
     trim_end = IntVar(value=35)
@@ -115,7 +119,7 @@ def counts_gui_init(root, tab):
         global fasta_file_path, out_file_path, seq_file_names
         button = tab.frame_left.button_seq_file_name
         file_path = filedialog.askopenfilenames(filetypes=[("FastQ Files", "*.fastq")])
-        print(file_path)
+        print("seq file: " + file_path)
         if file_path is not None and file_path != "":
             seq_file_names = file_path
         if button.cget("text") != "✓ Seq_File_Name":

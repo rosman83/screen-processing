@@ -1,1 +1,1 @@
-# example-package
+TODO: Setup a fancy README
