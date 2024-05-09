@@ -21,6 +21,7 @@ defaultLibConfigName = 'library_config.txt'
 
 
 def processExperimentsFromConfig(libraryDirectory):
+    print("starting experimental processing here...")
     generatePlots='png'
     configFile='config.ini'
     # load in the supported libraries and sublibraries
@@ -69,6 +70,7 @@ def processExperimentsFromConfig(libraryDirectory):
     # load in counts, create table of total counts in each and each file as a column
     printNow('Loading counts data')
 
+    # TODO: Fix issues here with column name creation
     columnDict = dict()
     for tup in sorted(exptParameters['counts_file_list']):
         if tup in columnDict:

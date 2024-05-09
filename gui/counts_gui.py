@@ -33,7 +33,7 @@ def counts_gui_init(root, tab):
     tab.text.insert("end", "\n")
     tab.text.insert(
         "end",
-        "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like) \n\n",
+        "Currently in development. Please report any issues to the @rosman83 on Github.\n",
     )
 
     # right panel - information - params table
@@ -58,24 +58,19 @@ def counts_gui_init(root, tab):
     tab.frame_left.title.grid(row=0, column=0, sticky="nsew", pady=5, padx=5)
 
     # left panel - controls - parameter buttons
-    # TODO: Remove this in prod...
+    # TODO: URGENT, a system to select and scan multiple seq files in upload
     # fasta_file_path = None
-    fasta_file_path = "/Users/rashid/Documents/Scripts/screen-processing/demo/data/CRISPRi_v1_human.trim_1_35.fa"
-    # out_file_path = None
-    out_file_path = "/Users/rashid/Documents/Scripts/screen-processing/demo/output"
-    seq_file_names = None
+    fasta_file_path =  "/Users/rashid/Desktop/OLD/Scripts/screen-processing/demo/data/CRISPRi_v1_human.trim_1_35.fa"
+    out_file_path =  "/Users/rashid/Desktop/OLD/Scripts/screen-processing/demo/output"
     seq_file_names = (
-        "/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index1.fastq",
-        "/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index10.fastq"
-    )
-   #  seq_file_names = (
-    #    "/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index6.fastq",
-    #    "/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index3.fastq",
-    #    "/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index14.fastq",
-    #    "/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index12.fastq",
-    #    "/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index10.fastq",
-    #    "/Users/rashid/Documents/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index1.fastq",
-    #) 
+        "/Users/rashid/Desktop/OLD/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index6.fastq",
+        "/Users/rashid/Desktop/OLD/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index3.fastq",
+        "/Users/rashid/Desktop/OLD/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index14.fastq",
+        "/Users/rashid/Desktop/OLD/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index12.fastq",
+        "/Users/rashid/Desktop/OLD/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index10.fastq",
+        "/Users/rashid/Desktop/OLD/Scripts/screen-processing/demo/data/Sequencing_files/Demo_index1.fastq",
+    ) 
+
     test_mode = False
     trim_start = IntVar(value=1)
     trim_end = IntVar(value=35)
