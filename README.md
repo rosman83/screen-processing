@@ -10,7 +10,7 @@ Reimplementation of (FastQ -> Counts in replicates -> Analysis of CRISPR data)
 
 ## Preview
 
-![Animated Preview](https://github.com/rosman83/bcmhnc-toolkit/blob/main/imgs/preview.gif)
+![Animated Preview](https://github.com/rosman83/screen-processing/blob/main/imgs/preview.gif)
 
 ## Installation
 
