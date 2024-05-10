@@ -18,9 +18,8 @@ def init_config():
         }
         # # default settings for [gene_analysis]
         config['gene_analysis'] = {'collapse_to_transcripts': True, 'generate_pseudogene_dist': 'auto', 'pseudogene_size': 10, 'num_pseudogenes': 16000, 'calculate_ave': True, 'best_n': 3, 'calculate_mw': True, 'calculate_nth': False, 'nth': 2}
-        # TODO: Add dedicated controls for growth values
-        # # default settings for [growth_values]
-        config['growth_values'] = {'growth_value_string': 'gamma:Rep2:11.1519761622\nrho:Rep2:8.44158496881\ntau:Rep2:2.7103911934\ngamma:Rep1:10.7412001484\nrho:Rep1:7.82935376641\ntau:Rep1:2.9118463821'}
+        # TODO: Deal with growth values in dev
+        # config['growth_values'] = {'growth_value_string': 'gamma:Rep2:11.1519761622\nrho:Rep2:8.44158496881\ntau:Rep2:2.7103911934\ngamma:Rep1:10.7412001484\nrho:Rep1:7.82935376641\ntau:Rep1:2.9118463821'}
         
         with open('config.ini', 'w') as configfile:
             config.write(configfile)
@@ -34,12 +33,14 @@ def create_config_using_parser(output_folder, library, counts_files_obj):
         parser.remove_section('library_settings')
     if parser.has_section('counts_files'):
         parser.remove_section('counts_files')
-    # if parser.has_section('growth_values'):
-    #     parser.remove_section('growth_values')
+    # TODO: Deal with growth values in dev
+    if parser.has_section('growth_values'):
+         parser.remove_section('growth_values')
     parser.add_section('experiment_settings')
     parser.add_section('library_settings')
     parser.add_section('counts_files')
-    # parser.add_section('growth_values')
+    # TODO: Deal with growth values in dev
+    parser.add_section('growth_values')
     random_id = ''.join(random.choices('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890', k=6))
     parser.set('experiment_settings', 'output_folder', output_folder)
     parser.set('experiment_settings', 'experiment_name', random_id)
@@ -96,7 +97,7 @@ def parseExptConfig(configFile, librariesToSublibrariesDict):
     libraryDict = librariesToSublibrariesDict
     if parser.has_option('library_settings', 'library'):
         parsedLibrary = parser.get('library_settings', 'library')
-
+        print('DEV = USING LIBRARY: ' + parsedLibrary)
         if parsedLibrary.lower() in libraryDict:
             paramDict['library'] = parsedLibrary.lower()
         else:
@@ -250,6 +251,8 @@ def parseExptConfig(configFile, librariesToSublibrariesDict):
             'growth_values', 'growth_value_string').strip()
 
         if 'condition_tuples' in paramDict and 'counts_file_list' in paramDict:
+            # DEBUG
+            print('debug: ' + paramDict['condition_tuples'])
             expectedComparisons = set(
                 list(zip(*paramDict['condition_tuples']))[0])
             expectedReplicates = set(
